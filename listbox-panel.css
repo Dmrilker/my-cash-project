@@ -1,0 +1,685 @@
+/* ===== DATA LIST PANEL STYLES ===== */
+
+/* Ana Container - Sabit Boyut */
+.dashboard-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Sayfa uzamasını önle */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Header */
+.main-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 20px;
+    color: white;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.header-content h1 {
+    margin: 0;
+    font-size: 1.8em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.user-info {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+.user-badge, .time-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 15px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.controls button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.btn-start {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.btn-stop {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+    color: white;
+}
+
+.btn-refresh {
+    background: linear-gradient(45deg, #2196F3, #1976D2);
+    color: white;
+}
+
+.btn-settings {
+    background: linear-gradient(45deg, #FF9800, #F57C00);
+    color: white;
+}
+
+.controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Main Content Layout - Flex */
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Sol Panel - Dashboard (60%) */
+.dashboard-panel {
+    flex: 0 0 60%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Sistem Durumu */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.status-item {
+    text-align: center;
+}
+
+.status-label {
+    display: block;
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-bottom: 5px;
+}
+
+.status-value {
+    font-weight: bold;
+    color: #495057;
+}
+
+/* Fiyat Kartları */
+.price-cards-container h2 {
+    margin: 0 0 20px 0;
+    color: #2c3e50;
+    text-align: center;
+}
+
+.price-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 15px;
+    margin-bottom: 20px;
+}
+
+.price-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    position: relative;
+    overflow: hidden;
+}
+
+.price-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.product-icon {
+    font-size: 1.5em;
+}
+
+.card-header h3 {
+    margin: 0;
+    flex: 1;
+    margin-left: 10px;
+    color: #2c3e50;
+    font-size: 1.1em;
+}
+
+.card-menu {
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 1.2em;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.card-menu:hover {
+    background: #f8f9fa;
+}
+
+.card-body {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.price-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.currency {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.trend {
+    font-size: 0.9em;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 15px;
+    background: #f8f9fa;
+}
+
+.trend.up {
+    color: #28a745;
+    background: #d4edda;
+}
+
+.trend.down {
+    color: #dc3545;
+    background: #f8d7da;
+}
+
+.trend.neutral {
+    color: #6c757d;
+    background: #f8f9fa;
+}
+
+.card-footer {
+    text-align: center;
+    font-size: 0.7em;
+    color: #6c757d;
+    border-top: 1px solid #f8f9fa;
+    padding-top: 8px;
+}
+
+/* Mini Grafik */
+.mini-chart-container {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.mini-chart-container h3 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 1em;
+}
+
+#miniChart {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Sağ Panel - Veri Listesi (40%) */
+.data-list-panel {
+    flex: 0 0 40%;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Panel Header */
+.panel-header {
+    background: linear-gradient(45deg, #2c3e50, #34495e);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.panel-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Panel Stats */
+.panel-stats {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.8em;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-label {
+    display: block;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #495057;
+}
+
+/* List Container */
+.list-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* List Header */
+.list-header {
+    background: #495057;
+    color: white;
+    padding: 12px 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr;
+    font-weight: bold;
+    font-size: 0.85em;
+    border-bottom: 2px solid #343a40;
+}
+
+/* Data List - Scrollable */
+.data-list {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 40px 20px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.empty-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    margin: 0 0 10px 0;
+    color: #495057;
+}
+
+.empty-state p {
+    margin: 0 0 20px 0;
+    font-size: 0.9em;
+}
+
+.empty-action {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.empty-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+/* Data Rows */
+.data-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.2fr 1fr;
+    padding: 8px 15px;
+    border-bottom: 1px solid #f8f9fa;
+    font-size: 0.8em;
+    transition: all 0.2s ease;
+    align-items: center;
+}
+
+.data-row:hover {
+    background: #e3f2fd;
+}
+
+.data-row:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.data-row.new-entry {
+    background: #d4edda;
+    animation: highlightNew 3s ease;
+}
+
+@keyframes highlightNew {
+    0% { background: #28a745; color: white; }
+    10% { background: #d4edda; color: inherit; }
+    100% { background: inherit; color: inherit; }
+}
+
+.data-row .col-time {
+    font-family: 'Courier New', monospace;
+    font-size: 0.75em;
+    color: #495057;
+}
+
+.data-row .col-product {
+    font-weight: bold;
+}
+
+.data-row .col-price {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    text-align: right;
+}
+
+.data-row .col-change {
+    text-align: center;
+    font-weight: bold;
+}
+
+.change-up {
+    color: #28a745;
+}
+
+.change-down {
+    color: #dc3545;
+}
+
+.change-neutral {
+    color: #6c757d;
+}
+
+/* Panel Footer */
+.panel-footer {
+    background: #f8f9fa;
+    padding: 10px 15px;
+    border-top: 1px solid #e9ecef;
+    font-size: 0.75em;
+}
+
+.footer-info {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+}
+
+/* Main Footer */
+.main-footer {
+    background: rgba(0, 0, 0, 0.1);
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Custom Scrollbar */
+.data-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.data-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.data-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 4px;
+}
+
+.data-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(45deg, #5a6fd8, #6a42a0);
+}
+
+.dashboard-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dashboard-panel::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.dashboard-panel::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.dashboard-panel::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Loading Styles */
+.loading-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-content h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.loading-content p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.loading-spinner {
+    border: 4px solid rgba(255,255,255,0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-progress {
+    width: 300px;
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, white, rgba(255,255,255,0.8));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .dashboard-panel {
+        flex: 0 0 55%;
+    }
+    
+    .data-list-panel {
+        flex: 0 0 45%;
+    }
+    
+    .price-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .user-info {
+        justify-content: center;
+    }
+    
+    .controls {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .controls button {
+        padding: 8px 15px;
+        font-size: 0.8em;
+    }
+    
+    .panel-stats {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .list-header,
+    .data-row {
+        grid-template-columns: 60px 50px 70px 60px;
+        font-size: 0.7em;
+        padding: 6px 10px;
+    }
+    
+    .footer-content {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .loading-container,
+    .controls,
+    .panel-controls {
+        display: none;
+    }
+    
+    .dashboard-container {
+        height: auto;
+    }
+    
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .dashboard-panel,
+    .data-list-panel {
+        flex: none;
+        break-inside: avoid;
+    }
+}
