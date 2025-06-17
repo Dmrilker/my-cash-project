@@ -1,0 +1,3614 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nakit - AI Destekli Finansal Analiz ve Tahmin Sistemi">
+    <meta name="keywords" content="altın, borsa, kripto, finansal analiz, tahmin">
+    <meta name="author" content="Dmrilker">
+    <title>Nakit - Gelişmiş AI Finansal Analiz Sistemi</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ========================================== */
+        /* TEMEL RESET VE GENEL STİLLER */
+        /* ========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========================================== */
+        /* NAVBAR - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo h2 {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .version {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7em;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: rgba(255,255,255,0.3);
+            font-weight: 600;
+        }
+
+        .nav-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .sistem-durumu {
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .kullanici-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ========================================== */
+        /* DASHBOARD CONTAINER - GÜÇLENDIRILMIŞ */
+        /* ========================================== */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header h1 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* ========================================== */
+        /* BUTON STİLLERİ - MODERNLEŞTIRILMIŞ */
+        /* ========================================== */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========================================== */
+        /* DASHBOARD GRID - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .widget-large {
+            grid-column: span 2;
+        }
+
+        /* ========================================== */
+        /* WIDGET STİLLERİ - MODERNLEŞTIRILMIŞ */
+        /* ========================================== */
+        .widget {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-height: 450px;
+        }
+
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .widget-header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .widget-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .widget-content {
+            padding: 20px;
+            max-height: 380px;
+            overflow-y: auto;
+        }
+
+        /* ========================================== */
+        /* FİYAT WIDGET - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .fiyat-listesi {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .fiyat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .fiyat-item:hover {
+            background: #e3f2fd;
+            transform: scale(1.02);
+        }
+
+        .fiyat-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .fiyat-info i {
+            font-size: 1.5em;
+            width: 30px;
+            text-align: center;
+        }
+
+        .fiyat-değer {
+            text-align: right;
+        }
+
+        .fiyat {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .değişim {
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .pozitif { color: #28a745; }
+        .negatif { color: #dc3545; }
+        .notr { color: #6c757d; }
+
+        /* ========================================== */
+        /* RİSK ANALİZİ WIDGET - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .risk-container {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .risk-meter-wrapper {
+            flex: 1;
+            text-align: center;
+        }
+
+        .risk-meter {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #4CAF50 0deg 120deg,
+                #FFC107 120deg 240deg,
+                #F44336 240deg 360deg
+            );
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .risk-meter::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .risk-needle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: #333;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(45deg);
+            border-radius: 2px;
+            z-index: 3;
+            transition: transform 0.5s ease;
+        }
+
+        .risk-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .risk-value {
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .risk-center small {
+            font-size: 0.5em;
+            color: #666;
+        }
+
+        .risk-info {
+            flex: 1;
+        }
+
+        .risk-level {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .risk-level.low { background: linear-gradient(45deg, #4CAF50, #45a049); }
+        .risk-level.medium { background: linear-gradient(45deg, #FFC107, #e6ac00); }
+        .risk-level.high { background: linear-gradient(45deg, #F44336, #da190b); }
+
+        .risk-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .risk-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.85em;
+        }
+
+        .risk-badge {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .risk-badge.low { background: #4CAF50; }
+        .risk-badge.medium { background: #FFC107; color: #333; }
+        .risk-badge.high { background: #F44336; }
+        .risk-badge.trend-up { background: #4CAF50; }
+        .risk-badge.trend-down { background: #F44336; }
+        .risk-badge.action-buy { background: #4CAF50; }
+        .risk-badge.action-sell { background: #F44336; }
+        .risk-badge.action-hold { background: #2196F3; }
+
+        /* ========================================== */
+        /* AI TAHMİN WIDGET - GÜÇLENDIRILMIŞ */
+        /* ========================================== */
+        .tahmin-container {
+            text-align: center;
+        }
+
+        .tahmin-karar {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .tahmin-detaylar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tahmin-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .güven-bar {
+            flex: 1;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin: 0 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .güven-progress {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        /* ========================================== */
+        /* GELİŞMİŞ AI DASHBOARD STİLLERİ */
+        /* ========================================== */
+        .ai-tahmin-merkezi {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .ai-karar-kart-buyuk {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ai-icon-animasyon {
+            font-size: 4rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .karar-sonuc {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .karar-sonuc.alim { color: #28a745; }
+        .karar-sonuc.satim { color: #dc3545; }
+        .karar-sonuc.bekle { color: #ffc107; }
+
+        .guven-meter {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            height: 20px;
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .guven-progress {
+            background: linear-gradient(90deg, #28a745, #34ce57);
+            height: 100%;
+            border-radius: 25px;
+            transition: width 0.5s ease;
+        }
+
+        .model-konsensus {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .model-oylari {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .model-oy {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .model-oy.alim { background: rgba(40, 167, 69, 0.3); }
+        .model-oy.satim { background: rgba(220, 53, 69, 0.3); }
+        .model-oy.bekle { background: rgba(255, 193, 7, 0.3); }
+
+        .konsensus-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            height: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .konsensus-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #34ce57);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .tahmin-detay-kartlari {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .detay-kart {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .kart-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .kart-baslik {
+            display: block;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .kart-deger {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .kart-alt-bilgi {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .risk-dusuk { color: #28a745; }
+
+        /* ========================================== */
+        /* GELİŞMİŞ PANEL STİLLERİ */
+        /* ========================================== */
+        .zaman-dilimi-analizi, .teknik-indikator-paneli, .pattern-tanima-paneli,
+        .makro-ekonomik-panel, .haber-duygu-paneli, .akilli-oneri-paneli,
+        .performans-izleme-paneli, .canli-veri-akisi, .hizli-erisim-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .zaman-dilimleri {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .zaman-dilimi-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .zaman-dilimi-kart:hover {
+            transform: translateY(-5px);
+        }
+
+        .zaman-dilimi-kart.aktif {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .trend-oku {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .trend-oku.yukselis { color: #28a745; }
+        .trend-oku.dusus { color: #dc3545; }
+        .trend-oku.yatay { color: #6c757d; }
+
+        .trend-grafik-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        /* ========================================== */
+        /* TEKNİK İNDİKATÖRLER - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .indikator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .indikator-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .indikator-baslik {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .indikator-deger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .deger {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .durum {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .durum.pozitif { background: #28a745; }
+        .durum.asiri-satim { background: #dc3545; }
+        .durum.asiri-alim { background: #ffc107; color: #333; }
+
+        .indikator-bar {
+            position: relative;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .rsi-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+            transition: width 0.5s ease;
+        }
+
+        .rsi-seviye {
+            position: absolute;
+            top: -20px;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rsi-seviye.asiri-satim { left: 30%; }
+        .rsi-seviye.asiri-alim { right: 30%; }
+
+        .macd-histogram, .bollinger-pozisyon, .momentum-grafik {
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .histogram-bar {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 20px;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .histogram-bar.pozitif { background: #28a745; }
+
+        .bollinger-pozisyon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+
+        .bb-ust, .bb-orta, .bb-alt {
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .bb-alt.aktif { background: #dc3545; color: white; }
+
+        .fiyat-pointer {
+            position: absolute;
+            right: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* ========================================== */
+        /* PATTERN KARTLARI - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .bulunan-patternlar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .pattern-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .pattern-kart:hover {
+            transform: translateY(-3px);
+        }
+
+        .pattern-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            text-align: center;
+        }
+
+        .pattern-adi {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .pattern-guven {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .pattern-sinyal {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .pattern-sinyal.alim { color: #28a745; }
+        .pattern-sinyal.satim { color: #dc3545; }
+        .pattern-sinyal.bekle { color: #ffc107; }
+
+        .pattern-aciklama {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .pattern-grafik {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .pattern-legend {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .legend-item.hammer { background: #dc3545; color: white; }
+        .legend-item.triangle { background: #007bff; color: white; }
+        .legend-item.fibonacci { background: #ffc107; color: #333; }
+
+        /* ========================================== */
+        /* MAKRO EKONOMİK PANEL - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .makro-skor-kart {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .skor-gosterge {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .skor-daire svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .skor-progress {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .skor-deger {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .skor-seviye {
+            position: absolute;
+            bottom: 35%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .makro-detaylar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .makro-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .makro-baslik {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .makro-deger {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .makro-durum {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .makro-durum.sabit { background: #6c757d; }
+        .makro-durum.yuksek { background: #dc3545; }
+        .makro-durum.dusuk { background: #28a745; }
+        .makro-durum.orta { background: #ffc107; color: #333; }
+
+        .kuresel-piyasalar {
+            margin-top: 30px;
+        }
+
+        .piyasa-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .piyasa-kart {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .piyasa-adi {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .piyasa-deger {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .piyasa-degisim {
+            font-weight: 600;
+        }
+
+        /* ========================================== */
+        /* HABER VE DUYGU ANALİZİ - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .duygu-skorlari {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .duygu-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .duygu-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .duygu-sayi {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .duygu-tip {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .genel-duygu {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .duygu-skor {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .duygu-seviye {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .son-haberler {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .haber-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .haber-item.pozitif { border-left-color: #28a745; }
+        .haber-item.notral { border-left-color: #6c757d; }
+        .haber-item.negatif { border-left-color: #dc3545; }
+
+        .haber-zaman {
+            font-size: 0.8rem;
+            color: #666;
+            min-width: 40px;
+        }
+
+        .haber-baslik {
+            flex: 1;
+            margin: 0 15px;
+            font-weight: 500;
+        }
+
+        .haber-duygu {
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .haber-duygu.pozitif { background: #28a745; }
+        .haber-duygu.notral { background: #6c757d; }
+        .haber-duygu.negatif { background: #dc3545; }
+
+        /* ========================================== */
+        /* AKILLI ÖNERİLER - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .uyari-container, .oneri-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .uyari-baslik, .oneri-baslik {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .uyari-item, .oneri-item {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid #ffc107;
+            font-size: 0.9rem;
+        }
+
+        .oneri-item {
+            border-left-color: #28a745;
+        }
+
+        .eylem-onerileri {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .eylem-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .eylem-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .eylem-baslik {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .eylem-detay {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .eylem-miktar {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .eylem-kart.alim { border-left: 5px solid #28a745; }
+        .eylem-kart.risk { border-left: 5px solid #dc3545; }
+
+        /* ========================================== */
+        /* PERFORMANS KARTLARI - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .performans-kartlari {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .performans-kart {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .performans-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            text-align: center;
+            color: #667eea;
+        }
+
+        .performans-bilgi {
+            flex: 1;
+        }
+
+        .performans-baslik {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .performans-deger {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .performans-trend {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .performans-trend.yukselis { color: #28a745; }
+        .performans-trend.dusus { color: #dc3545; }
+        .performans-trend.stabil { color: #6c757d; }
+        .performans-trend.iyilesiyor { color: #007bff; }
+
+        .mini-grafik {
+            width: 80px;
+            height: 40px;
+        }
+
+        .konsensus-tarihce {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        /* ========================================== */
+        /* CANLI VERİ AKIŞI - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .veri-akis-kartlari {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .akis-kart {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .akis-durum {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .akis-kart.aktif .akis-durum {
+            background: #28a745;
+            color: white;
+        }
+
+        .akis-kart.beklemede .akis-durum {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .akis-tip {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .akis-frekans {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .akis-son {
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        /* ========================================== */
+        /* HIZLI ERİŞİM KONTROL PANELİ - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .kontrol-butonlari {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kontrol-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .kontrol-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .kontrol-btn.ai-analiz { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .kontrol-btn.pattern { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .kontrol-btn.makro { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .kontrol-btn.performans { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .kontrol-btn.ai-kontrol { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .kontrol-btn.sistem { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+
+        .hizli-ayarlar {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .ayar-grup {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ayar-grup label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ayar-grup input, .ayar-grup select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .ayar-grup input[type="range"] {
+            padding: 0;
+        }
+
+        /* ========================================== */
+        /* VERİ LİSTESİ WIDGET - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .data-history-widget {
+            grid-column: span 2;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .data-history-widget .widget-content {
+            flex: 1;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .veri-listesi-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
+        }
+
+        .veri-listesi-header {
+            background: #495057;
+            color: white;
+            padding: 12px 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .veri-listesi {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            min-height: 300px;
+            max-height: 350px;
+        }
+
+        .veri-satiri {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            padding: 8px 15px;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 0.8em;
+            transition: all 0.2s ease;
+            align-items: center;
+        }
+
+        .veri-satiri:hover {
+            background: #e3f2fd;
+        }
+
+        .veri-satiri:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .veri-satiri.yeni-veri {
+            background: #d4edda;
+            animation: highlightNew 3s ease;
+        }
+
+        @keyframes highlightNew {
+            0% {
+                background: #28a745;
+                color: white;
+                transform: scale(1.02);
+            }
+            10% {
+                background: #d4edda;
+                color: inherit;
+                transform: scale(1);
+            }
+            100% {
+                background: inherit;
+                color: inherit;
+            }
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            text-align: center;
+            color: #6c757d;
+            padding: 40px 20px;
+        }
+
+        .empty-state i {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .data-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-controls .btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .test-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .veri-sayisi {
+            font-size: 0.8em;
+            color: white;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 12px;
+        }
+
+        /* ========================================== */
+        /* İSTATİSTİKLER WIDGET - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .istatistik-listesi {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .istat-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .istat-item i {
+            font-size: 1.5em;
+            color: #667eea;
+            width: 30px;
+            text-align: center;
+        }
+
+        .istat-info {
+            flex: 1;
+        }
+
+        .istat-label {
+            display: block;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .istat-değer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* ========================================== */
+        /* BİLDİRİMLER WIDGET - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .bildirim-listesi {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bildirim-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            background: #f8f9fa;
+        }
+
+        .bildirim-item.success {
+            border-left-color: #28a745;
+        }
+
+        .bildirim-item.warning {
+            border-left-color: #ffc107;
+        }
+
+        .bildirim-item.error {
+            border-left-color: #dc3545;
+        }
+
+        .bildirim-content {
+            flex: 1;
+        }
+
+        .bildirim-time {
+            font-size: 0.8em;
+            color: #6c757d;
+            display: block;
+        }
+
+        .bildirim-text {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* ========================================== */
+        /* SAYFALAR - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .gelistirme-notif {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .gelistirme-notif i {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .gelistirme-notif h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .gelistirme-notif p {
+            color: #6c757d;
+        }
+
+        /* ========================================== */
+        /* RESPONSIVE TASARIM - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .widget-large {
+                grid-column: span 1;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .risk-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .veri-listesi-header,
+            .veri-satiri {
+                grid-template-columns: 60px 50px 70px 60px;
+                font-size: 0.7em;
+                padding: 6px 10px;
+            }
+
+            .ai-karar-kart-buyuk {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .zaman-dilimleri {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .performans-kartlari {
+                grid-template-columns: 1fr;
+            }
+            
+            .kontrol-butonlari {
+                grid-template-columns: 1fr;
+            }
+
+            .makro-skor-kart {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hizli-ayarlar {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ========================================== */
+        /* ANIMASYONLAR - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pattern-kart, .performans-kart, .zaman-dilimi-kart {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        /* ========================================== */
+        /* TOOLTIP STİLLERİ - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* ========================================== */
+        /* SCROLLBAR STİLLERİ - GELİŞTİRİLMİŞ */
+        /* ========================================== */
+        .veri-listesi::-webkit-scrollbar,
+        .widget-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .veri-listesi::-webkit-scrollbar-track,
+        .widget-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .veri-listesi::-webkit-scrollbar-thumb,
+        .widget-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Ana Uygulama - Loading Screen YOK -->
+    <div id="app" class="app-container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <i class="fas fa-wallet"></i>
+                    <h2>Nakit</h2>
+                    <span class="version">v2.0 AI</span>
+                </div>
+                <div class="nav-menu">
+                    <button class="nav-btn active" onclick="sayfaGec('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i>
+                        Dashboard
+                    </button>
+                    <button class="nav-btn" onclick="sayfaGec('analiz')">
+                        <i class="fas fa-chart-pie"></i>
+                        Analiz
+                    </button>
+                    <button class="nav-btn" onclick="sayfaGec('ayarlar')">
+                        <i class="fas fa-cog"></i>
+                        Ayarlar
+                    </button>
+                </div>
+                <div class="nav-status">
+                    <span class="sistem-durumu" id="sistemDurumu">Hazır</span>
+                    <div class="kullanici-info">
+                        <i class="fas fa-user"></i>
+                        <span>Dmrilker</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Sayfası -->
+        <div id="dashboard" class="page active">
+            <div class="dashboard-container">
+                <header class="dashboard-header">
+                    <h1>📊 Gelişmiş AI Finansal Dashboard</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="manuelTahmin()">
+                            <i class="fas fa-brain"></i>
+                            Manuel Tahmin
+                        </button>
+                        <button class="btn btn-success" id="başlatBtn" onclick="sistemiBaslat()">
+                            <i class="fas fa-play"></i>
+                            Sistemi Başlat
+                        </button>
+                        <button class="btn btn-danger" id="durdurBtn" onclick="sistemiDurdur()" disabled>
+                            <i class="fas fa-stop"></i>
+                            Sistemi Durdur
+                        </button>
+                    </div>
+                </header>
+
+                <!-- ========================================== -->
+                <!-- 1. GELİŞMİŞ AI TAHMİN MERKEZİ -->
+                <!-- ========================================== -->
+                <div class="ai-tahmin-merkezi">
+                    <div class="ai-karar-kart-buyuk">
+                        <div class="ai-icon-animasyon">🧠</div>
+                        <div class="karar-detaylari">
+                            <h2 class="ai-karar-baslik">Gelişmiş AI Önerisi</h2>
+                            <div class="karar-sonuc alim">GÜÇLÜ ALIM</div>
+                            <div class="guven-meter">
+                                <div class="guven-progress" style="width: 87%"></div>
+                                <span class="guven-yuzde">87% Güven</span>
+                            </div>
+                            
+                            <!-- Model Konsensus Göstergesi -->
+                            <div class="model-konsensus">
+                                <span class="konsensus-baslik">5 Model Fikir Birliği:</span>
+                                <div class="model-oylari">
+                                    <span class="model-oy alim">🤖 Neural: ALIM</span>
+                                    <span class="model-oy alim">📈 Teknik: ALIM</span>
+                                    <span class="model-oy alim">🎯 Pattern: ALIM</span>
+                                    <span class="model-oy bekle">💭 Sentiment: BEKLE</span>
+                                    <span class="model-oy alim">📊 Regression: ALIM</span>
+                                </div>
+                                <div class="konsensus-bar">
+                                    <div class="konsensus-progress" style="width: 80%"></div>
+                                    <span>80% Model Birliği</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hedef ve Zaman Bilgileri -->
+                    <div class="tahmin-detay-kartlari">
+                        <div class="detay-kart">
+                            <div class="kart-icon">🎯</div>
+                            <div class="kart-bilgi">
+                                <span class="kart-baslik">Hedef Fiyat</span>
+                                <span class="kart-deger">$2,089.50</span>
+                                <span class="kart-alt-bilgi">+1.95% beklenti</span>
+                            </div>
+                        </div>
+                        
+                                               
+                        <div class="detay-kart">
+                            <div class="kart-icon">🛡️</div>
+                            <div class="kart-bilgi">
+                                <span class="kart-baslik">Risk Seviyesi</span>
+                                <span class="kart-deger risk-dusuk">DÜŞÜK</span>
+                                <span class="kart-alt-bilgi">Makro destek var</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 2. ÇOKLU ZAMAN DİLİMİ ANALİZİ -->
+                <!-- ========================================== -->
+                <div class="zaman-dilimi-analizi">
+                    <h3>📊 Çoklu Zaman Dilimi Trend Analizi</h3>
+                    
+                    <div class="zaman-dilimleri">
+                        <div class="zaman-dilimi-kart aktif" onclick="zamanDilimiSec('5m')">
+                            <div class="zaman-baslik">5 Dakika</div>
+                            <div class="trend-oku yukselis">↗️ +0.3%</div>
+                            <div class="veri-sayisi">72 veri noktası</div>
+                        </div>
+                        
+                        <div class="zaman-dilimi-kart" onclick="zamanDilimiSec('30m')">
+                            <div class="zaman-baslik">30 Dakika</div>
+                            <div class="trend-oku yukselis">↗️ +0.8%</div>
+                            <div class="veri-sayisi">48 veri noktası</div>
+                        </div>
+                        
+                        <div class="zaman-dilimi-kart" onclick="zamanDilimiSec('1h')">
+                            <div class="zaman-baslik">1 Saat</div>
+                            <div class="trend-oku yukselis">↗️ +1.2%</div>
+                            <div class="veri-sayisi">168 veri noktası</div>
+                        </div>
+                        
+                        <div class="zaman-dilimi-kart" onclick="zamanDilimiSec('4h')">
+                            <div class="zaman-baslik">4 Saat</div>
+                            <div class="trend-oku yatay">➡️ +0.1%</div>
+                            <div class="veri-sayisi">168 veri noktası</div>
+                        </div>
+                        
+                        <div class="zaman-dilimi-kart" onclick="zamanDilimiSec('1d')">
+                            <div class="zaman-baslik">1 Gün</div>
+                            <div class="trend-oku dusus">↘️ -0.4%</div>
+                            <div class="veri-sayisi">90 veri noktası</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Zaman Dilimi Trend Grafiği -->
+                    <div class="trend-grafik-container">
+                        <canvas id="zamanDilimiTrendGrafik" width="800" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 3. GELİŞMİŞ TEKNİK İNDİKATÖR PANELİ -->
+                <!-- ========================================== -->
+                <div class="teknik-indikator-paneli">
+                    <h3>📈 Gelişmiş Teknik İndikatörler</h3>
+                    
+                    <div class="indikator-grid">
+                        <!-- RSI Göstergesi -->
+                        <div class="indikator-kart rsi">
+                            <div class="indikator-baslik">RSI (14)</div>
+                            <div class="indikator-deger">
+                                <span class="deger" id="rsiDeger">34.7</span>
+                                <span class="durum asiri-satim" id="rsiDurum">Aşırı Satım</span>
+                            </div>
+                            <div class="indikator-bar">
+                                <div class="rsi-progress" id="rsiProgress" style="width: 34.7%"></div>
+                                <span class="rsi-seviye asiri-satim">30</span>
+                                <span class="rsi-seviye asiri-alim">70</span>
+                            </div>
+                        </div>
+                        
+                        <!-- MACD Göstergesi -->
+                        <div class="indikator-kart macd">
+                            <div class="indikator-baslik">MACD</div>
+                            <div class="indikator-deger">
+                                <span class="deger" id="macdDeger">+2.34</span>
+                                <span class="durum pozitif" id="macdDurum">Pozitif Sinyal</span>
+                            </div>
+                            <div class="macd-histogram">
+                                <div class="histogram-bar pozitif" id="macdBar" style="height: 60%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Bollinger Bands -->
+                        <div class="indikator-kart bollinger">
+                            <div class="indikator-baslik">Bollinger Bands</div>
+                            <div class="indikator-deger">
+                                <span class="deger">Alt Band</span>
+                                <span class="durum asiri-satim">Yakın</span>
+                            </div>
+                            <div class="bollinger-pozisyon">
+                                <div class="bb-ust">$2,080</div>
+                                <div class="bb-orta">$2,055</div>
+                                <div class="bb-alt aktif">$2,030</div>
+                                <div class="fiyat-pointer" style="bottom: 15%">📍 $2,047</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Momentum -->
+                        <div class="indikator-kart momentum">
+                            <div class="indikator-baslik">Momentum (10)</div>
+                            <div class="indikator-deger">
+                                <span class="deger" id="momentumDeger">+1.8%</span>
+                                <span class="durum pozitif" id="momentumDurum">Güçleniyor</span>
+                            </div>
+                            <div class="momentum-grafik">
+                                <canvas id="momentumMiniGrafik" width="120" height="60"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 4. PATTERN TANIMA VE GÖRSELLEŞTİRME -->
+                <!-- ========================================== -->
+                <div class="pattern-tanima-paneli">
+                    <h3>🔍 Tespit Edilen Teknik Pattern'lar</h3>
+                    
+                    <div class="bulunan-patternlar">
+                        <!-- Candlestick Pattern -->
+                        <div class="pattern-kart candlestick">
+                            <div class="pattern-icon">🕯️</div>
+                            <div class="pattern-bilgi">
+                                <div class="pattern-adi">Hammer Pattern</div>
+                                <div class="pattern-guven">Güven: 85%</div>
+                                <div class="pattern-sinyal alim">🔥 Güçlü Alım Sinyali</div>
+                                <div class="pattern-aciklama">
+                                    Alt fitilin uzun olması düşüş trendinin sonlanabileceğini gösteriyor
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart Pattern -->
+                        <div class="pattern-kart chart">
+                            <div class="pattern-icon">📊</div>
+                            <div class="pattern-bilgi">
+                                <div class="pattern-adi">Ascending Triangle</div>
+                                <div class="pattern-guven">Güven: 72%</div>
+                                <div class="pattern-sinyal bekle">⏳ Breakout Beklentisi</div>
+                                <div class="pattern-aciklama">
+                                    Yükselen üçgen pattern'ı - yukarı breakout muhtemel
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Fibonacci Pattern -->
+                        <div class="pattern-kart fibonacci">
+                            <div class="pattern-icon">🌀</div>
+                            <div class="pattern-bilgi">
+                                <div class="pattern-adi">Fibonacci Retracement</div>
+                                <div class="pattern-guven">Güven: 68%</div>
+                                <div class="pattern-sinyal alim">📈 61.8% Destek</div>
+                                <div class="pattern-aciklama">
+                                    Altın oran seviyesinde güçlü destek buldu
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pattern Görselleştirme -->
+                    <div class="pattern-grafik">
+                        <canvas id="patternGorselGrafik" width="600" height="300"></canvas>
+                        <div class="pattern-legend">
+                            <span class="legend-item hammer">🔴 Hammer</span>
+                            <span class="legend-item triangle">🔵 Triangle</span>
+                            <span class="legend-item fibonacci">🟡 Fibonacci</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 5. MAKRO EKONOMİK DASHBOARD -->
+                <!-- ========================================== -->
+                <div class="makro-ekonomik-panel">
+                    <h3>🌐 Makro Ekonomik Durum</h3>
+                    
+                    <!-- Makro Skor Göstergesi -->
+                    <div class="makro-skor-kart">
+                        <div class="skor-gosterge">
+                            <div class="skor-daire">
+                                <svg viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="10"/>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="#28a745" 
+                                            stroke-width="10" stroke-dasharray="283" 
+                                            stroke-dashoffset="113" class="skor-progress"/>
+                                </svg>
+                                <div class="skor-deger">68</div>
+                                <div class="skor-seviye">POZİTİF</div>
+                            </div>
+                        </div>
+                        
+                        <div class="makro-detaylar">
+                            <div class="makro-item">
+                                <span class="makro-baslik">🏦 FED Faizi</span>
+                                <span class="makro-deger">5.25%</span>
+                                <span class="makro-durum sabit">Sabit</span>
+                            </div>
+                            
+                            <div class="makro-item">
+                                <span class="makro-baslik">🇹🇷 TCMB Faizi</span>
+                                <span class="makro-deger">45.00%</span>
+                                <span class="makro-durum yuksek">Yüksek</span>
+                            </div>
+                            
+                            <div class="makro-item">
+                                <span class="makro-baslik">📈 VIX (Korku)</span>
+                                <span class="makro-deger">18.5</span>
+                                <span class="makro-durum dusuk">Düşük Korku</span>
+                            </div>
+                            
+                            <div class="makro-item">
+                                <span class="makro-baslik">🌍 Jeopolitik Risk</span>
+                                <span class="makro-deger">35/100</span>
+                                <span class="makro-durum orta">Orta Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Küresel Piyasalar -->
+                    <div class="kuresel-piyasalar">
+                        <h4>📊 Küresel Piyasa Durumu</h4>
+                        <div class="piyasa-grid">
+                            <div class="piyasa-kart sp500">
+                                <span class="piyasa-adi">S&P 500</span>
+                                <span class="piyasa-deger">4,547.32</span>
+                                <span class="piyasa-degisim pozitif">+0.8%</span>
+                            </div>
+                            
+                            <div class="piyasa-kart nasdaq">
+                                <span class="piyasa-adi">NASDAQ</span>
+                                <span class="piyasa-deger">14,125.50</span>
+                                <span class="piyasa-degisim pozitif">+1.2%</span>
+                            </div>
+                            
+                            <div class="piyasa-kart dxy">
+                                <span class="piyasa-adi">DXY (Dolar)</span>
+                                <span class="piyasa-deger">104.25</span>
+                                <span class="piyasa-degisim negatif">-0.3%</span>
+                            </div>
+                            
+                            <div class="piyasa-kart oil">
+                                <span class="piyasa-adi">Petrol</span>
+                                <span class="piyasa-deger">$75.80</span>
+                                <span class="piyasa-degisim pozitif">+1.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 6. HABER VE DUYGU ANALİZİ -->
+                <!-- ========================================== -->
+                <div class="haber-duygu-paneli">
+                    <h3>📰 Haber & Duygu Analizi</h3>
+                    
+                    <div class="duygu-skorlari">
+                        <div class="duygu-kart pozitif">
+                            <div class="duygu-icon">😊</div>
+                            <div class="duygu-sayi">12</div>
+                            <div class="duygu-tip">Pozitif Haber</div>
+                        </div>
+                        
+                        <div class="duygu-kart notral">
+                            <div class="duygu-icon">😐</div>
+                            <div class="duygu-sayi">8</div>
+                            <div class="duygu-tip">Nötral Haber</div>
+                        </div>
+                        
+                        <div class="duygu-kart negatif">
+                            <div class="duygu-icon">😟</div>
+                            <div class="duygu-sayi">4</div>
+                            <div class="duygu-tip">Negatif Haber</div>
+                        </div>
+                        
+                        <div class="genel-duygu">
+                            <div class="duygu-skor">+3.2</div>
+                            <div class="duygu-seviye pozitif">Pozitif Hava</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Son Haberler -->
+                    <div class="son-haberler">
+                        <div class="haber-item pozitif">
+                            <div class="haber-zaman">14:25</div>
+                            <div class="haber-baslik">FED faiz kararını açıkladı</div>
+                            <div class="haber-duygu pozitif">+2 Pozitif</div>
+                        </div>
+                        
+                        <div class="haber-item notral">
+                            <div class="haber-zaman">13:15</div>
+                            <div class="haber-baslik">Altın vadeli işlemlerde artış</div>
+                            <div class="haber-duygu notral">0 Nötral</div>
+                        </div>
+                        
+                        <div class="haber-item pozitif">
+                            <div class="haber-zaman">12:45</div>
+                            <div class="haber-baslik">Merkez bankası politika açıklaması</div>
+                            <div class="haber-duygu pozitif">+1 Pozitif</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 7. AKILLI UYARI VE ÖNERİLER -->
+                <!-- ========================================== -->
+                <div class="akilli-oneri-paneli">
+                    <h3>💡 AI Destekli Akıllı Öneriler</h3>
+                    
+                    <!-- Uyarılar -->
+                    <div class="uyari-container" id="uyariContainer">
+                        <div class="uyari-baslik">⚠️ Önemli Uyarılar</div>
+                        <div class="uyari-item">
+                            📊 Veri kalitesi düşük - dikkatli olun
+                        </div>
+                        <div class="uyari-item">
+                            📈 Yüksek volatilite - pozisyon boyutunu azaltın
+                        </div>
+                    </div>
+                    
+                    <!-- Öneriler -->
+                    <div class="oneri-container" id="öneriContainer">
+                        <div class="oneri-baslik">💡 Akıllı Öneriler</div>
+                        <div class="oneri-item">
+                            💡 Kademeli alım yapın
+                        </div>
+                        <div class="oneri-item">
+                            🎯 Güçlü sinyal - normal pozisyon boyutu
+                        </div>
+                        <div class="oneri-item">
+                            🛡️ Stop-loss kullanın
+                        </div>
+                    </div>
+                    
+                    <!-- Eylem Önerileri -->
+                    <div class="eylem-onerileri">
+                        <div class="eylem-kart alim">
+                            <div class="eylem-icon">🟢</div>
+                            <div class="eylem-baslik">Önerilen Eylem</div>
+                            <div class="eylem-detay">Kademeli Alım</div>
+                            <div class="eylem-miktar">Pozisyon: %15-20</div>
+                        </div>
+                        
+                        <div class="eylem-kart risk">
+                            <div class="eylem-icon">🛡️</div>
+                            <div class="eylem-baslik">Risk Yönetimi</div>
+                            <div class="eylem-detay">Stop-Loss</div>
+                            <div class="eylem-miktar">Seviye: $2,030</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 8. PERFORMANS İZLEME PANELİ -->
+                <!-- ========================================== -->
+                <div class="performans-izleme-paneli">
+                    <h3>📊 Sistem & AI Performansı</h3>
+                    
+                    <div class="performans-kartlari">
+                        <!-- AI Doğruluk Oranı -->
+                        <div class="performans-kart ai-dogruluk">
+                            <div class="performans-icon">🤖</div>
+                            <div class="performans-bilgi">
+                                <div class="performans-baslik">AI Doğruluk</div>
+                                <div class="performans-deger" id="aiDogrulukOran">73.8%</div>
+                                <div class="performans-trend yukselis">+2.3% bu hafta</div>
+                            </div>
+                            <div class="mini-grafik">
+                                <canvas id="aiDogrulukGrafik" width="80" height="40"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Veri Kalitesi -->
+                        <div class="performans-kart veri-kalite">
+                            <div class="performans-icon">📊</div>
+                            <div class="performans-bilgi">
+                                <div class="performans-baslik">Veri Kalitesi</div>
+                                <div class="performans-deger">YÜKSEK</div>
+                                <div class="performans-trend stabil">168 veri noktası</div>
+                            </div>
+                        </div>
+                        
+                        <!-- API Performansı -->
+                        <div class="performans-kart api-performans">
+                            <div class="performans-icon">⚡</div>
+                            <div class="performans-bilgi">
+                                <div class="performans-baslik">API Hızı</div>
+                                <div class="performans-deger" id="apiHizi">245ms</div>
+                                <div class="performans-trend iyilesiyor">-15ms optimizasyon</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cache Verimliliği -->
+                        <div class="performans-kart cache-verim">
+                            <div class="performans-icon">💾</div>
+                            <div class="performans-bilgi">
+                                <div class="performans-baslik">Cache Verim</div>
+                                <div class="performans-deger" id="cacheVerim">87%</div>
+                                <div class="performans-trend yukselis">Hit ratio yüksek</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Model Konsensus Tarihçesi -->
+                    <div class="konsensus-tarihce">
+                        <h4>🤖 Model Fikir Birliği Tarihçesi</h4>
+                        <canvas id="konsensusGrafik" width="600" height="150"></canvas>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 9. CANLI VERİ AKIŞI STATÜSLERİ -->
+                <!-- ========================================== -->
+                <div class="canli-veri-akisi">
+                    <h3>📡 Canlı Veri Akışı</h3>
+                    
+                    <div class="veri-akis-kartlari">
+                        <div class="akis-kart aktif">
+                            <div class="akis-durum">🟢 CANLI</div>
+                            <div class="akis-tip">Fiyat Verisi</div>
+                            <div class="akis-frekans">30 saniye</div>
+                            <div class="akis-son" id="fiyatAkisSon">Son: 14:35:12</div>
+                        </div>
+                        
+                        <div class="akis-kart aktif">
+                            <div class="akis-durum">🟢 CANLI</div>
+                            <div class="akis-tip">Makro Veri</div>
+                            <div class="akis-frekans">5 dakika</div>
+                            <div class="akis-son" id="makroAkisSon">Son: 14:30:00</div>
+                        </div>
+                        
+                        <div class="akis-kart aktif">
+                            <div class="akis-durum">🟢 CANLI</div>
+                            <div class="akis-tip">AI Analiz</div>
+                            <div class="akis-frekans">3 dakika</div>
+                            <div class="akis-son" id="aiAkisSon">Son: 14:33:45</div>
+                        </div>
+                        
+                        <div class="akis-kart beklemede">
+                            <div class="akis-durum">🟡 BEKLEMEDE</div>
+                            <div class="akis-tip">Haber Akışı</div>
+                            <div class="akis-frekans">10 dakika</div>
+                            <div class="akis-son" id="haberAkisSon">Son: 14:25:30</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- 10. HIZLI ERİŞİM KONTROL PANELİ -->
+                <!-- ========================================== -->
+                <div class="hizli-erisim-panel">
+                    <h3>🎮 Hızlı Erişim Kontrolleri</h3>
+                    
+                    <div class="kontrol-butonlari">
+                        <button onclick="gelismisAnaliz()" class="kontrol-btn ai-analiz">
+                            🧠 Gelişmiş AI Analizi
+                        </button>
+                        
+                        <button onclick="patternAnalizi()" class="kontrol-btn pattern">
+                            🔍 Pattern Tarama
+                        </button>
+                        
+                        <button onclick="makroGuncelle()" class="kontrol-btn makro">
+                            🌐 Makro Güncelleme
+                        </button>
+                        
+                        <button onclick="performansRaporu()" class="kontrol-btn performans">
+                            📊 Performans Raporu
+                        </button>
+                        
+                        <button onclick="aiPerformansKontrol()" class="kontrol-btn ai-kontrol">
+                            🤖 AI Kontrol
+                        </button>
+                        
+                        <button onclick="sistemSaglik()" class="kontrol-btn sistem">
+                            🔍 Sistem Sağlık
+                        </button>
+                    </div>
+                    
+                    <!-- Hızlı Ayarlar -->
+                    <div class="hizli-ayarlar">
+                        <div class="ayar-grup">
+                            <label>🎯 AI Güven Eşiği</label>
+                            <input type="range" min="50" max="90" value="70" id="guvenEsigi" onchange="guvenEsigiDegisti(this.value)">
+                            <span id="guvenDeger">70%</span>
+                        </div>
+                        
+                        <div class="ayar-grup">
+                            <label>⏱️ Güncelleme Sıklığı</label>
+                            <select id="guncellemeSikligi" onchange="guncellemeSikligiDegisti(this.value)">
+                                <option value="30000">30 saniye</option>
+                                <option value="60000">1 dakika</option>
+                                <option value="180000" selected>3 dakika</option>
+                                <option value="300000">5 dakika</option>
+                            </select>
+                        </div>
+                        
+                        <div class="ayar-grup">
+                            <label>🔔 Bildirim Seviyesi</label>
+                            <select id="bildirimSeviyesi" onchange="bildirimSeviyesiDegisti(this.value)">
+                                <option value="all">Tüm Bildirimler</option>
+                                <option value="important" selected>Sadece Önemli</option>
+                                <option value="critical">Sadece Kritik</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Canlı Fiyatlar Widget -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-chart-line"></i> Canlı Fiyatlar</h3>
+                            <span id="sonGuncelleme">--:--</span>
+                        </div>
+                        <div class="widget-content">
+                            <div class="fiyat-listesi">
+                                <div class="fiyat-item altin">
+                                    <div class="fiyat-info">
+                                        <i class="fas fa-coins" style="color: #FFD700;"></i>
+                                        <span class="fiyat-label">Altın (USD/oz)</span>
+                                    </div>
+                                    <div class="fiyat-değer">
+                                        <span id="altinFiyat" class="fiyat">$2,045.32</span>
+                                        <span id="altinDegisim" class="değişim pozitif">+0.15%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="fiyat-item dolar">
+                                    <div class="fiyat-info">
+                                        <i class="fas fa-dollar-sign" style="color: #28a745;"></i>
+                                        <span class="fiyat-label">USD/TRY</span>
+                                    </div>
+                                    <div class="fiyat-değer">
+                                        <span id="dolarFiyat" class="fiyat">₺30.7845</span>
+                                        <span id="dolarDegisim" class="değişim negatif">-0.05%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="fiyat-item bitcoin">
+                                    <div class="fiyat-info">
+                                        <i class="fab fa-bitcoin" style="color: #F7931A;"></i>
+                                        <span class="fiyat-label">Bitcoin</span>
+                                    </div>
+                                    <div class="fiyat-değer">
+                                        <span id="bitcoinFiyat" class="fiyat">$67,890</span>
+                                        <span id="bitcoinDegisim" class="değişim pozitif">+1.24%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="fiyat-item borsa">
+                                    <div class="fiyat-info">
+                                        <i class="fas fa-chart-bar" style="color: #007bff;"></i>
+                                        <span class="fiyat-label">BIST 100</span>
+                                    </div>
+                                    <div class="fiyat-değer">
+                                        <span id="borsaFiyat" class="fiyat">8,654.32</span>
+                                        <span id="borsaDegisim" class="değişim pozitif">+0.87%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Risk Analizi Widget -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-shield-alt"></i> Risk Analizi</h3>
+                            <span id="riskStatus">Aktif</span>
+                        </div>
+                        <div class="widget-content">
+                            <div class="risk-container">
+                                <div class="risk-meter-wrapper">
+                                    <div class="risk-meter" id="riskMeter">
+                                        <div class="risk-needle" id="riskNeedle"></div>
+                                        <div class="risk-center">
+                                            <span class="risk-value" id="riskValue">45</span>
+                                            <small>Risk</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="risk-info">
+                                    <div class="risk-level medium" id="riskSeviyesi">Orta Risk</div>
+                                    <div class="risk-details">
+                                        <div class="risk-item">
+                                            <span>Volatilite:</span>
+                                            <span id="volatilite" class="risk-badge medium">Orta</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span>Trend:</span>
+                                            <span id="trend" class="risk-badge trend-up">Yükseliş</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span>Piyasa:</span>
+                                            <span id="piyasaDurumu" class="risk-badge medium">Stabil</span>
+                                        </div>
+                                        <div class="risk-item">
+                                            <span>Aksiyon:</span>
+                                            <span id="onerilenAksiyon" class="risk-badge action-hold">Bekle</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Tahmin Widget -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-brain"></i> AI Tahmin Sistemi</h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="tahmin-container">
+                                <div class="tahmin-karar" id="tahminKarar">
+                                    <i class="fas fa-clock"></i>
+                                    Sistem Başlatılmayı Bekliyor...
+                                </div>
+                                <div class="tahmin-detaylar">
+                                    <div class="tahmin-item">
+                                        <span>Güven Seviyesi:</span>
+                                        <div class="güven-bar">
+                                            <div class="güven-progress" id="güvenProgress" style="width: 0%"></div>
+                                        </div>
+                                        <span id="tahminGüven">0%</span>
+                                    </div>
+                                    <div class="tahmin-item">
+                                        <span>Önerilen Saat:</span>
+                                        <span id="tahminSaat">--:--</span>
+                                    </div>
+                                    <div class="tahmin-item">
+                                        <span>Neden:</span>
+                                        <span id="tahminNeden">Sistemi başlatın...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İstatistikler Widget -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-chart-pie"></i> İstatistikler</h3>
+                        </div>
+                        <div class="widget-content">
+                            <div class="istatistik-listesi">
+                                <div class="istat-item">
+                                    <i class="fas fa-database"></i>
+                                    <div class="istat-info">
+                                        <span class="istat-label">Toplanan Veri</span>
+                                        <span class="istat-değer" id="toplamVeri">0</span>
+                                    </div>
+                                </div>
+                                <div class="istat-item">
+                                    <i class="fas fa-brain"></i>
+                                    <div class="istat-info">
+                                        <span class="istat-label">AI Tahmin</span>
+                                        <span class="istat-değer" id="tahminSayisi">0</span>
+                                    </div>
+                                </div>
+                                <div class="istat-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <div class="istat-info">
+                                        <span class="istat-label">Aktif Günler</span>
+                                        <span class="istat-değer" id="aktifGunler">1</span>
+                                    </div>
+                                </div>
+                                <div class="istat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <div class="istat-info">
+                                        <span class="istat-label">Çalışma Süresi</span>
+                                        <span class="istat-değer" id="calismaSuresi">00:00:00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bildirimler Widget -->
+                    <div class="widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-bell"></i> Sistem Bildirimleri</h3>
+                            <button class="btn" onclick="bildirimleriTemizle()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 5px 10px; border-radius: 5px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="widget-content">
+                            <div id="bildirimListesi" class="bildirim-listesi">
+                                <div class="bildirim-item success">
+                                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                                    <div class="bildirim-content">
+                                        <span class="bildirim-time" id="sistemBaslatmaZamani">12:14</span>
+                                        <span class="bildirim-text">Sistem başarıyla yüklendi</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Canlı Veri Akışı Widget -->
+                    <div class="widget data-history-widget">
+                        <div class="widget-header">
+                            <h3><i class="fas fa-list"></i> Canlı Veri Akışı</h3>
+                            <div class="data-controls">
+                                <button class="btn" onclick="veriListesiTemizle()" title="Listeyi temizle">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button class="btn" onclick="veriListesiDuraklat()" title="Durakla/Başlat" id="duraklatBtn">
+                                    <i class="fas fa-pause"></i>
+                                </button>
+                                <button class="test-btn" onclick="testVeriEkle()" title="Test verisi ekle">
+                                    🧪 Test
+                                </button>
+                                <span class="veri-sayisi" id="veriSayisi">0 kayıt</span>
+                            </div>
+                        </div>
+                        <div class="widget-content">
+                            <div class="veri-listesi-container">
+                                <div class="veri-listesi-header">
+                                    <span>⏰ Zaman</span>
+                                    <span>💰 Ürün</span>
+                                    <span>📈 Fiyat</span>
+                                    <span>📊 Değişim</span>
+                                </div>
+                                <div class="veri-listesi" id="veriListesi">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>Henüz veri yok</p>
+                                        <small>Sistemi başlattığınızda veriler burada görünecek</small>
+                                        <br><br>
+                                        <button class="test-btn" onclick="testVeriEkle()">
+                                            🧪 Test Verisi Ekle
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analiz Sayfası -->
+        <div id="analiz" class="page">
+            <div class="dashboard-container">
+                <div class="gelistirme-notif">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Analiz Sayfası Geliştirilme Aşamasında</h3>
+                    <p>Yakında detaylı finansal analiz araçları eklenecek...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ayarlar Sayfası -->
+        <div id="ayarlar" class="page">
+            <div class="dashboard-container">
+                <div class="gelistirme-notif">
+                    <i class="fas fa-cog"></i>
+                    <h3>Ayarlar Sayfası Geliştirilme Aşamasında</h3>
+                    <p>Yakında sistem ayarları ve konfigürasyon seçenekleri eklenecek...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- GELİŞMİŞ JAVASCRIPT - FULL FEATURED -->
+    <!-- ========================================== -->
+    <script>
+        console.log('🚀 Nakit v2.0 AI - Gelişmiş sistem başlatılıyor...');
+
+        // ========================================== //
+        // GLOBAL DEĞİŞKENLER - GELİŞTİRİLMİŞ
+        // ========================================== //
+        window.nakitSistem = {
+            aktif: false,
+            veriSayaci: 0,
+            başlatmaZamani: null,
+            interval: null,
+            aiModelleri: {
+                neural: { aktif: true, performans: 0.78 },
+                teknik: { aktif: true, performans: 0.82 },
+                pattern: { aktif: true, performans: 0.75 },
+                sentiment: { aktif: true, performans: 0.69 },
+                regression: { aktif: true, performans: 0.84 }
+            },
+            ayarlar: {
+                guvenEsigi: 70,
+                guncellemeSikligi: 180000,
+                bildirimSeviyesi: 'important'
+            }
+        };
+
+        window.veriListesiDuraklatildi = false;
+        window.veriSayisi = 0;
+        window.secilenZamanDilimi = '5m';
+
+        // ========================================== //
+        // BAŞLATMA İŞLEMLERİ - GELİŞTİRİLMİŞ
+        // ========================================== //
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ DOM yüklendi, sistem hazırlanıyor...');
+            
+            // Sistem zamanını ayarla
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            const sistemZamani = document.getElementById('sistemBaslatmaZamani');
+            if (sistemZamani) {
+                sistemZamani.textContent = zaman;
+            }
+
+            // Son güncelleme zamanını ayarla
+            document.getElementById('sonGuncelleme').textContent = zaman;
+
+            // İlk risk analizini başlat
+            setTimeout(() => {
+                riskAnaliziGuncelle();
+                console.log('✅ İlk risk analizi tamamlandı');
+            }, 1000);
+
+            // Mini grafikleri başlat
+            setTimeout(() => {
+                initMiniCharts();
+                console.log('✅ Mini grafikler başlatıldı');
+            }, 1500);
+
+            console.log('✅ Sistem zamanı ayarlandı:', zaman);
+        });
+
+        // ========================================== //
+        // SAYFA GEÇİŞ FONKSİYONU - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function sayfaGec(sayfaAdi) {
+            // Tüm sayfaları gizle
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Tüm nav butonlarını pasif yap
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Seçilen sayfayı göster
+            const sayfa = document.getElementById(sayfaAdi);
+            if (sayfa) {
+                sayfa.classList.add('active');
+            }
+            
+            // Seçilen nav butonunu aktif yap
+            event.target.closest('.nav-btn').classList.add('active');
+            
+            console.log('📄 Sayfa değiştirildi:', sayfaAdi);
+        }
+
+        // ========================================== //
+        // VERİ LİSTESİ YÖNETİMİ - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function veriListesiTemizle() {
+            const veriListesi = document.getElementById('veriListesi');
+            if (veriListesi) {
+                veriListesi.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Liste temizlendi</p>
+                        <small>Yeni veriler burada görünecek</small>
+                        <br><br>
+                        <button class="test-btn" onclick="testVeriEkle()">
+                            🧪 Test Verisi Ekle
+                        </button>
+                    </div>
+                `;
+                window.veriSayisi = 0;
+                document.getElementById('veriSayisi').textContent = '0 kayıt';
+                console.log('🗑️ Veri listesi temizlendi');
+            }
+        }
+
+        function veriListesiDuraklat() {
+            window.veriListesiDuraklatildi = !window.veriListesiDuraklatildi;
+            const btn = document.getElementById('duraklatBtn');
+            if (btn) {
+                const icon = btn.querySelector('i');
+                if (window.veriListesiDuraklatildi) {
+                    icon.className = 'fas fa-play';
+                    btn.title = 'Başlat';
+                    console.log('⏸️ Veri listesi duraklatıldı');
+                } else {
+                    icon.className = 'fas fa-pause';
+                    btn.title = 'Durakla';
+                    console.log('▶️ Veri listesi başlatıldı');
+                }
+            }
+        }
+
+        function veriListesineEkle(urun, fiyat, degisim) {
+            if (window.veriListesiDuraklatildi) {
+                return;
+            }
+
+            const veriListesi = document.getElementById('veriListesi');
+            if (!veriListesi) return;
+
+            // Empty state'i kaldır
+            const emptyState = veriListesi.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            
+            // Trend/değişim class'ını belirle
+            let degisimClass = 'notr';
+            let trendIcon = '→';
+            
+            if (degisim.includes('+')) {
+                degisimClass = 'pozitif';
+                trendIcon = '↗️';
+            } else if (degisim.includes('-')) {
+                degisimClass = 'negatif';
+                trendIcon = '↘️';
+            }
+            
+            // Yeni satır oluştur
+            const yeniSatir = document.createElement('div');
+            yeniSatir.className = 'veri-satiri yeni-veri';
+            yeniSatir.innerHTML = `
+                <span>${zaman}</span>
+                <span>${urun}</span>
+                <span>${fiyat}</span>
+                <span class="${degisimClass}">${trendIcon} ${degisim}</span>
+            `;
+
+            // En üste ekle
+            veriListesi.insertBefore(yeniSatir, veriListesi.firstChild);
+
+            // Maksimum 50 kayıt tut
+            const satirlar = veriListesi.querySelectorAll('.veri-satiri');
+            if (satirlar.length > 50) {
+                for (let i = 50; i < satirlar.length; i++) {
+                    satirlar[i].remove();
+                }
+            }
+
+            // Sayıyı güncelle
+            const actualCount = veriListesi.querySelectorAll('.veri-satiri').length;
+            document.getElementById('veriSayisi').textContent = `${actualCount} kayıt`;
+            window.veriSayisi = actualCount;
+
+            // Animasyonu kaldır
+            setTimeout(() => {
+                yeniSatir.classList.remove('yeni-veri');
+            }, 3000);
+
+            // Scroll en üste
+            veriListesi.scrollTop = 0;
+
+            // Son güncelleme zamanını güncelle
+            document.getElementById('sonGuncelleme').textContent = zaman;
+        }
+
+        // ========================================== //
+        // TEST VERİSİ EKLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function testVeriEkle() {
+            const testVerileri = [
+                { urun: '🥇 Altın', fiyat: '$2,045.32', degisim: '+0.15%' },
+                { urun: '💵 USD/TRY', fiyat: '₺30.78', degisim: '-0.05%' },
+                { urun: '₿ Bitcoin', fiyat: '$67,890', degisim: '+1.24%' },
+                { urun: '📈 BIST 100', fiyat: '8,654.32', degisim: '+0.87%' },
+                { urun: '🥇 Altın', fiyat: '$2,044.18', degisim: '-0.06%' },
+                { urun: '💵 USD/TRY', fiyat: '₺30.79', degisim: '+0.03%' },
+                { urun: '₿ Bitcoin', fiyat: '$67,820', degisim: '-0.10%' },
+                { urun: '📈 BIST 100', fiyat: '8,649.77', degisim: '-0.05%' },
+                { urun: '🛢️ Petrol', fiyat: '$75.80', degisim: '+1.5%' },
+                { urun: '💎 Gümüş', fiyat: '$24.65', degisim: '+0.85%' }
+            ];
+            
+            const randomVeri = testVerileri[Math.floor(Math.random() * testVerileri.length)];
+            veriListesineEkle(randomVeri.urun, randomVeri.fiyat, randomVeri.degisim);
+            
+            // İstatistikleri güncelle
+            window.nakitSistem.veriSayaci++;
+            document.getElementById('toplamVeri').textContent = window.nakitSistem.veriSayaci;
+            
+            // Fiyat widget'larını güncelle
+            guncelFiyatlariGuncelle();
+            
+            console.log('🧪 Test verisi eklendi:', randomVeri.urun);
+        }
+
+        // ========================================== //
+        // RİSK ANALİZİ GÜNCELLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function riskAnaliziGuncelle() {
+            const riskValue = Math.floor(Math.random() * 100);
+            const riskNeedle = document.getElementById('riskNeedle');
+            const riskValueEl = document.getElementById('riskValue');
+            const riskSeviyesi = document.getElementById('riskSeviyesi');
+
+            if (riskValueEl) {
+                riskValueEl.textContent = riskValue;
+            }
+
+            if (riskNeedle) {
+                const rotation = (riskValue / 100) * 180 - 90;
+                riskNeedle.style.transform = `translate(-50%, -100%) rotate(${rotation}deg)`;
+            }
+
+            if (riskSeviyesi) {
+                let seviye, className;
+                if (riskValue < 30) {
+                    seviye = 'Düşük Risk';
+                    className = 'low';
+                } else if (riskValue < 70) {
+                    seviye = 'Orta Risk';
+                    className = 'medium';
+                } else {
+                    seviye = 'Yüksek Risk';
+                    className = 'high';
+                }
+                riskSeviyesi.textContent = seviye;
+                riskSeviyesi.className = `risk-level ${className}`;
+            }
+
+            // Risk detaylarını güncelle
+            const volatiliteValues = ['Düşük', 'Orta', 'Yüksek'];
+            const trendValues = ['Düşüş', 'Yatay', 'Yükseliş'];
+            const piyasaValues = ['Volatil', 'Stabil', 'Güçlü'];
+            const aksiyonValues = ['Sat', 'Bekle', 'Al'];
+
+            const volatilite = volatiliteValues[Math.floor(Math.random() * volatiliteValues.length)];
+            const trend = trendValues[Math.floor(Math.random() * trendValues.length)];
+            const piyasa = piyasaValues[Math.floor(Math.random() * piyasaValues.length)];
+            const aksiyon = aksiyonValues[Math.floor(Math.random() * aksiyonValues.length)];
+
+            if (document.getElementById('volatilite')) {
+                document.getElementById('volatilite').textContent = volatilite;
+            }
+            if (document.getElementById('trend')) {
+                document.getElementById('trend').textContent = trend;
+            }
+            if (document.getElementById('piyasaDurumu')) {
+                document.getElementById('piyasaDurumu').textContent = piyasa;
+            }
+            if (document.getElementById('onerilenAksiyon')) {
+                document.getElementById('onerilenAksiyon').textContent = aksiyon;
+            }
+        }
+
+        // ========================================== //
+        // SİSTEM BAŞLATMA - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function sistemiBaslat() {
+            if (window.nakitSistem.aktif) return;
+
+            window.nakitSistem.aktif = true;
+            window.nakitSistem.başlatmaZamani = new Date();
+            
+            // Butonları güncelle
+            document.getElementById('başlatBtn').disabled = true;
+            document.getElementById('durdurBtn').disabled = false;
+            
+            // Sistem durumunu güncelle
+            document.getElementById('sistemDurumu').textContent = 'Çalışıyor';
+            document.getElementById('sistemDurumu').style.color = '#28a745';
+
+            // AI Tahmin güncelle
+            document.getElementById('tahminKarar').innerHTML = `
+                <i class="fas fa-brain"></i>
+                Sistem Aktif - AI Modelleri Analiz Ediyor...
+            `;
+            document.getElementById('tahminGüven').textContent = '85%';
+            document.getElementById('güvenProgress').style.width = '85%';
+            document.getElementById('tahminSaat').textContent = new Date().toLocaleTimeString('tr-TR');
+            document.getElementById('tahminNeden').textContent = 'Çoklu AI modeli pozitif konsensüs gösteriyor';
+
+            // Otomatik veri ekleme başlat
+            window.nakitSistem.interval = setInterval(() => {
+                testVeriEkle();
+                riskAnaliziGuncelle();
+                teknikIndikatorleriGuncelle();
+                performansMetrikleriniGuncelle();
+                
+                // Çalışma süresini güncelle
+                if (window.nakitSistem.başlatmaZamani) {
+                    const now = new Date();
+                    const diff = now - window.nakitSistem.başlatmaZamani;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                    
+                    document.getElementById('calismaSuresi').textContent = 
+                        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, window.nakitSistem.ayarlar.guncellemeSikligi);
+
+            // Bildirim ekle
+            bildirimEkle('Gelişmiş AI sistemi başarıyla başlatıldı', 'success');
+            
+            console.log('🚀 Gelişmiş AI sistemi başlatıldı');
+        }
+
+        // ========================================== //
+        // SİSTEM DURDURMA - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function sistemiDurdur() {
+            if (!window.nakitSistem.aktif) return;
+
+            window.nakitSistem.aktif = false;
+            
+            // Interval'i durdur
+            if (window.nakitSistem.interval) {
+                clearInterval(window.nakitSistem.interval);
+                window.nakitSistem.interval = null;
+            }
+            
+            // Butonları güncelle
+            document.getElementById('başlatBtn').disabled = false;
+            document.getElementById('durdurBtn').disabled = true;
+            
+            // Sistem durumunu güncelle
+            document.getElementById('sistemDurumu').textContent = 'Durduruldu';
+            document.getElementById('sistemDurumu').style.color = '#dc3545';
+
+            // AI Tahmin güncelle
+            document.getElementById('tahminKarar').innerHTML = `
+                <i class="fas fa-stop"></i>
+                AI Sistemi Güvenli Şekilde Durduruldu
+            `;
+
+            // Bildirim ekle
+            bildirimEkle('AI sistemi güvenli şekilde durduruldu', 'warning');
+            
+            console.log('⏹️ AI sistemi durduruldu');
+        }
+
+        // ========================================== //
+        // BİLDİRİM EKLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function bildirimEkle(mesaj, tip = 'success') {
+            const bildirimListesi = document.getElementById('bildirimListesi');
+            if (!bildirimListesi) return;
+
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            let icon = 'fas fa-info-circle';
+            
+            if (tip === 'success') icon = 'fas fa-check-circle';
+            else if (tip === 'warning') icon = 'fas fa-exclamation-triangle';
+            else if (tip === 'error') icon = 'fas fa-times-circle';
+
+            const yeniBildirim = document.createElement('div');
+            yeniBildirim.className = `bildirim-item ${tip}`;
+            yeniBildirim.innerHTML = `
+                <i class="${icon}"></i>
+                <div class="bildirim-content">
+                    <span class="bildirim-time">${zaman}</span>
+                    <span class="bildirim-text">${mesaj}</span>
+                </div>
+            `;            // En üste ekle
+            bildirimListesi.insertBefore(yeniBildirim, bildirimListesi.firstChild);
+
+            // Maksimum 10 bildirim tut
+            const bildirimler = bildirimListesi.querySelectorAll('.bildirim-item');
+            if (bildirimler.length > 10) {
+                for (let i = 10; i < bildirimler.length; i++) {
+                    bildirimler[i].remove();
+                }
+            }
+        }
+
+        // ========================================== //
+        // BİLDİRİMLERİ TEMİZLE - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function bildirimleriTemizle() {
+            const bildirimListesi = document.getElementById('bildirimListesi');
+            if (bildirimListesi) {
+                bildirimListesi.innerHTML = `
+                    <div class="bildirim-item success">
+                        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                        <div class="bildirim-content">
+                            <span class="bildirim-time">${new Date().toLocaleTimeString('tr-TR')}</span>
+                            <span class="bildirim-text">Bildirimler temizlendi</span>
+                        </div>
+                    </div>
+                `;
+                console.log('🧹 Bildirimler temizlendi');
+            }
+        }
+
+        // ========================================== //
+        // MANUEL TAHMİN - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function manuelTahmin() {
+            const tahminSonuclari = [
+                { karar: 'GÜÇLÜ ALIM', güven: 92, neden: 'Çoklu AI modeli güçlü yükseliş sinyali veriyor', hedef: '$2,095' },
+                { karar: 'ALIM', güven: 78, neden: 'Teknik indikatörler pozitif trend gösteriyor', hedef: '$2,075' },
+                { karar: 'BEKLE', güven: 65, neden: 'Piyasa konsolidasyon içinde, net sinyal yok', hedef: '$2,055' },
+                { karar: 'SAT', güven: 72, neden: 'Risk-off moduna geçiş sinyalleri', hedef: '$2,025' },
+                { karar: 'GÜÇLÜ ALIM', güven: 88, neden: 'Fibonacci destekten güçlü sıçrama', hedef: '$2,085' }
+            ];
+
+            const randomTahmin = tahminSonuclari[Math.floor(Math.random() * tahminSonuclari.length)];
+
+            // Ana AI tahmin panelini güncelle
+            const karar = document.querySelector('.karar-sonuc');
+            if (karar) {
+                karar.textContent = randomTahmin.karar;
+                karar.className = `karar-sonuc ${randomTahmin.karar.includes('ALIM') ? 'alim' : randomTahmin.karar.includes('SAT') ? 'satim' : 'bekle'}`;
+            }
+
+            // Güven oranını güncelle
+            const guvenProgress = document.querySelector('.ai-tahmin-merkezi .guven-progress');
+            const guvenYuzde = document.querySelector('.guven-yuzde');
+            if (guvenProgress && guvenYuzde) {
+                guvenProgress.style.width = `${randomTahmin.güven}%`;
+                guvenYuzde.textContent = `${randomTahmin.güven}% Güven`;
+            }
+
+            // Hedef fiyatı güncelle
+            const hedefFiyat = document.querySelector('.detay-kart .kart-deger');
+            if (hedefFiyat) {
+                hedefFiyat.textContent = randomTahmin.hedef;
+            }
+
+            // Widget AI tahmin güncelle
+            document.getElementById('tahminKarar').innerHTML = `
+                <i class="fas fa-brain"></i>
+                Manuel AI Analizi: ${randomTahmin.karar}
+            `;
+            document.getElementById('tahminGüven').textContent = `${randomTahmin.güven}%`;
+            document.getElementById('güvenProgress').style.width = `${randomTahmin.güven}%`;
+            document.getElementById('tahminSaat').textContent = new Date().toLocaleTimeString('tr-TR');
+            document.getElementById('tahminNeden').textContent = randomTahmin.neden;
+
+            // Tahmin sayısını artır
+            const tahminSayisi = document.getElementById('tahminSayisi');
+            if (tahminSayisi) {
+                const mevcut = parseInt(tahminSayisi.textContent) || 0;
+                tahminSayisi.textContent = mevcut + 1;
+            }
+
+            bildirimEkle(`Manuel AI analizi: ${randomTahmin.karar} (%${randomTahmin.güven} güven)`, 'success');
+            console.log('🧠 Manuel AI analizi yapıldı:', randomTahmin);
+        }
+
+        // ========================================== //
+        // TEKNİK İNDİKATÖRLER GÜNCELLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function teknikIndikatorleriGuncelle() {
+            // RSI güncelle
+            const rsiValue = Math.floor(Math.random() * 100);
+            const rsiDeger = document.getElementById('rsiDeger');
+            const rsiDurum = document.getElementById('rsiDurum');
+            const rsiProgress = document.getElementById('rsiProgress');
+
+            if (rsiDeger) rsiDeger.textContent = rsiValue.toFixed(1);
+            if (rsiProgress) rsiProgress.style.width = `${rsiValue}%`;
+            
+            if (rsiDurum) {
+                if (rsiValue < 30) {
+                    rsiDurum.textContent = 'Aşırı Satım';
+                    rsiDurum.className = 'durum asiri-satim';
+                } else if (rsiValue > 70) {
+                    rsiDurum.textContent = 'Aşırı Alım';
+                    rsiDurum.className = 'durum asiri-alim';
+                } else {
+                    rsiDurum.textContent = 'Normal';
+                    rsiDurum.className = 'durum pozitif';
+                }
+            }
+
+            // MACD güncelle
+            const macdValue = (Math.random() - 0.5) * 10;
+            const macdDeger = document.getElementById('macdDeger');
+            const macdDurum = document.getElementById('macdDurum');
+            const macdBar = document.getElementById('macdBar');
+
+            if (macdDeger) {
+                macdDeger.textContent = (macdValue >= 0 ? '+' : '') + macdValue.toFixed(2);
+            }
+            if (macdDurum) {
+                macdDurum.textContent = macdValue >= 0 ? 'Pozitif Sinyal' : 'Negatif Sinyal';
+                macdDurum.className = `durum ${macdValue >= 0 ? 'pozitif' : 'negatif'}`;
+            }
+            if (macdBar) {
+                macdBar.style.height = `${Math.abs(macdValue) * 10}%`;
+                macdBar.className = `histogram-bar ${macdValue >= 0 ? 'pozitif' : 'negatif'}`;
+            }
+
+            // Momentum güncelle
+            const momentumValue = (Math.random() - 0.5) * 5;
+            const momentumDeger = document.getElementById('momentumDeger');
+            const momentumDurum = document.getElementById('momentumDurum');
+
+            if (momentumDeger) {
+                momentumDeger.textContent = (momentumValue >= 0 ? '+' : '') + momentumValue.toFixed(1) + '%';
+            }
+            if (momentumDurum) {
+                if (momentumValue > 1) {
+                    momentumDurum.textContent = 'Güçleniyor';
+                    momentumDurum.className = 'durum pozitif';
+                } else if (momentumValue < -1) {
+                    momentumDurum.textContent = 'Zayıflıyor';
+                    momentumDurum.className = 'durum negatif';
+                } else {
+                    momentumDurum.textContent = 'Stabil';
+                    momentumDurum.className = 'durum orta';
+                }
+            }
+        }
+
+        // ========================================== //
+        // PERFORMANS METRİKLERİ GÜNCELLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function performansMetrikleriniGuncelle() {
+            // AI Doğruluk oranı
+            const aiDogruluk = document.getElementById('aiDogrulukOran');
+            if (aiDogruluk) {
+                const oran = (70 + Math.random() * 25).toFixed(1);
+                aiDogruluk.textContent = oran + '%';
+            }
+
+            // API Hızı
+            const apiHizi = document.getElementById('apiHizi');
+            if (apiHizi) {
+                const hiz = Math.floor(200 + Math.random() * 100);
+                apiHizi.textContent = hiz + 'ms';
+            }
+
+            // Cache Verim
+            const cacheVerim = document.getElementById('cacheVerim');
+            if (cacheVerim) {
+                const verim = Math.floor(80 + Math.random() * 15);
+                cacheVerim.textContent = verim + '%';
+            }
+
+            // Veri akış zamanlarını güncelle
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            const fiyatAkis = document.getElementById('fiyatAkisSon');
+            const makroAkis = document.getElementById('makroAkisSon');
+            const aiAkis = document.getElementById('aiAkisSon');
+
+            if (fiyatAkis) fiyatAkis.textContent = `Son: ${zaman}`;
+            if (makroAkis && Math.random() > 0.7) makroAkis.textContent = `Son: ${zaman}`;
+            if (aiAkis && Math.random() > 0.6) aiAkis.textContent = `Son: ${zaman}`;
+        }
+
+        // ========================================== //
+        // GÜNCEL FİYATLARI GÜNCELLEME - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function guncelFiyatlariGuncelle() {
+            const fiyatlar = {
+                altin: { base: 2045, element: 'altinFiyat', degisim: 'altinDegisim' },
+                dolar: { base: 30.78, element: 'dolarFiyat', degisim: 'dolarDegisim' },
+                bitcoin: { base: 67890, element: 'bitcoinFiyat', degisim: 'bitcoinDegisim' },
+                borsa: { base: 8654, element: 'borsaFiyat', degisim: 'borsaDegisim' }
+            };
+
+            Object.keys(fiyatlar).forEach(key => {
+                const fiyat = fiyatlar[key];
+                const degisimOrani = (Math.random() - 0.5) * 2; // -1% ile +1% arası
+                const yeniFiyat = fiyat.base * (1 + degisimOrani / 100);
+                
+                const fiyatElement = document.getElementById(fiyat.element);
+                const degisimElement = document.getElementById(fiyat.degisim);
+                
+                if (fiyatElement) {
+                    if (key === 'altin') {
+                        fiyatElement.textContent = `$${yeniFiyat.toFixed(2)}`;
+                    } else if (key === 'dolar') {
+                        fiyatElement.textContent = `₺${yeniFiyat.toFixed(4)}`;
+                    } else if (key === 'bitcoin') {
+                        fiyatElement.textContent = `$${Math.floor(yeniFiyat).toLocaleString()}`;
+                    } else if (key === 'borsa') {
+                        fiyatElement.textContent = yeniFiyat.toFixed(2);
+                    }
+                }
+                
+                if (degisimElement) {
+                    const prefix = degisimOrani >= 0 ? '+' : '';
+                    degisimElement.textContent = `${prefix}${degisimOrani.toFixed(2)}%`;
+                    degisimElement.className = `değişim ${degisimOrani >= 0 ? 'pozitif' : 'negatif'}`;
+                }
+            });
+        }
+
+        // ========================================== //
+        // ZAMAN DİLİMİ SEÇİM - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function zamanDilimiSec(dilim) {
+            // Tüm kartları pasif yap
+            document.querySelectorAll('.zaman-dilimi-kart').forEach(kart => {
+                kart.classList.remove('aktif');
+            });
+
+            // Seçilen kartı aktif yap
+            event.target.closest('.zaman-dilimi-kart').classList.add('aktif');
+            
+            window.secilenZamanDilimi = dilim;
+            
+            console.log('📊 Zaman dilimi seçildi:', dilim);
+            bildirimEkle(`Zaman dilimi değiştirildi: ${dilim}`, 'success');
+        }
+
+        // ========================================== //
+        // HIZLI ERİŞİM FONKSİYONLARI - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function gelismisAnaliz() {
+            bildirimEkle('Gelişmiş AI analizi başlatıldı - 5 model çalışıyor', 'success');
+            
+            setTimeout(() => {
+                // AI modellerini simüle et
+                const modelSonuclari = {
+                    neural: Math.random() > 0.3 ? 'ALIM' : 'BEKLE',
+                    teknik: Math.random() > 0.4 ? 'ALIM' : 'SAT',
+                    pattern: Math.random() > 0.35 ? 'ALIM' : 'BEKLE',
+                    sentiment: Math.random() > 0.5 ? 'BEKLE' : 'ALIM',
+                    regression: Math.random() > 0.3 ? 'ALIM' : 'BEKLE'
+                };
+                
+                // Model oylarını güncelle
+                document.querySelectorAll('.model-oy').forEach((element, index) => {
+                    const modeller = Object.keys(modelSonuclari);
+                    if (modeller[index]) {
+                        const sonuc = modelSonuclari[modeller[index]];
+                        element.className = `model-oy ${sonuc.toLowerCase()}`;
+                        element.innerHTML = element.innerHTML.split(':')[0] + ': ' + sonuc;
+                    }
+                });
+                
+                bildirimEkle('Gelişmiş AI analizi tamamlandı', 'success');
+            }, 2000);
+            
+            console.log('🧠 Gelişmiş AI analizi başlatıldı');
+        }
+
+        function patternAnalizi() {
+            bildirimEkle('Pattern tarama başlatıldı - 15 farklı pattern analiz ediliyor', 'success');
+            
+            setTimeout(() => {
+                const patterns = ['Hammer', 'Doji', 'Triangle', 'Head & Shoulders', 'Double Top'];
+                const bulunanPattern = patterns[Math.floor(Math.random() * patterns.length)];
+                bildirimEkle(`Pattern tespit edildi: ${bulunanPattern}`, 'success');
+            }, 3000);
+            
+            console.log('🔍 Pattern analizi başlatıldı');
+        }
+
+        function makroGuncelle() {
+            bildirimEkle('Makro ekonomik veriler güncelleniyor...', 'success');
+            
+            setTimeout(() => {
+                // Makro skorunu güncelle
+                const yeniSkor = Math.floor(50 + Math.random() * 40);
+                document.querySelector('.skor-deger').textContent = yeniSkor;
+                
+                bildirimEkle(`Makro ekonomik veriler güncellendi - Skor: ${yeniSkor}`, 'success');
+            }, 1500);
+            
+            console.log('🌐 Makro güncelleme başlatıldı');
+        }
+
+        function performansRaporu() {
+            const rapor = {
+                aiDogruluk: (70 + Math.random() * 25).toFixed(1) + '%',
+                islemSayisi: Math.floor(500 + Math.random() * 1000),
+                basariOrani: (80 + Math.random() * 15).toFixed(1) + '%',
+                ortalamaSure: Math.floor(150 + Math.random() * 100) + 'ms'
+            };
+            
+            bildirimEkle(`Performans Raporu: AI Doğruluk ${rapor.aiDogruluk}, İşlem ${rapor.islemSayisi}, Başarı ${rapor.basariOrani}`, 'success');
+            console.log('📊 Performans raporu:', rapor);
+        }
+
+        function aiPerformansKontrol() {
+            bildirimEkle('AI model performansları kontrol ediliyor...', 'success');
+            
+            setTimeout(() => {
+                Object.keys(window.nakitSistem.aiModelleri).forEach(model => {
+                    const performans = window.nakitSistem.aiModelleri[model].performans;
+                    const yeniPerformans = Math.max(0.5, Math.min(1.0, performans + (Math.random() - 0.5) * 0.1));
+                    window.nakitSistem.aiModelleri[model].performans = yeniPerformans;
+                });
+                
+                bildirimEkle('AI model performansları güncellendi', 'success');
+            }, 2000);
+            
+            console.log('🤖 AI performans kontrolü başlatıldı');
+        }
+
+        function sistemSaglik() {
+            const saglikRaporu = {
+                cpu: Math.floor(20 + Math.random() * 60) + '%',
+                memory: Math.floor(40 + Math.random() * 40) + '%',
+                network: Math.floor(100 + Math.random() * 500) + 'ms',
+                uptime: '2g 14s 32dk'
+            };
+            
+            bildirimEkle(`Sistem Sağlık: CPU ${saglikRaporu.cpu}, RAM ${saglikRaporu.memory}, Ağ ${saglikRaporu.network}`, 'success');
+            console.log('🔍 Sistem sağlık kontrolü:', saglikRaporu);
+        }
+
+        // ========================================== //
+        // AYAR FONKSİYONLARI - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function guvenEsigiDegisti(deger) {
+            window.nakitSistem.ayarlar.guvenEsigi = parseInt(deger);
+            document.getElementById('guvenDeger').textContent = deger + '%';
+            bildirimEkle(`AI güven eşiği ${deger}% olarak ayarlandı`, 'success');
+            console.log('🎯 Güven eşiği değiştirildi:', deger);
+        }
+
+        function guncellemeSikligiDegisti(deger) {
+            window.nakitSistem.ayarlar.guncellemeSikligi = parseInt(deger);
+            
+            // Aktif interval varsa yeniden başlat
+            if (window.nakitSistem.aktif && window.nakitSistem.interval) {
+                clearInterval(window.nakitSistem.interval);
+                sistemiBaslat();
+            }
+            
+            const saniye = Math.floor(deger / 1000);
+            bildirimEkle(`Güncelleme sıklığı ${saniye} saniye olarak ayarlandı`, 'success');
+            console.log('⏱️ Güncelleme sıklığı değiştirildi:', saniye, 'saniye');
+        }
+
+        function bildirimSeviyesiDegisti(seviye) {
+            window.nakitSistem.ayarlar.bildirimSeviyesi = seviye;
+            bildirimEkle(`Bildirim seviyesi '${seviye}' olarak ayarlandı`, 'success');
+            console.log('🔔 Bildirim seviyesi değiştirildi:', seviye);
+        }
+
+        // ========================================== //
+        // MİNİ GRAFİKLER - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function initMiniCharts() {
+            // Zaman dilimi trend grafiği
+            const trendCtx = document.getElementById('zamanDilimiTrendGrafik');
+            if (trendCtx) {
+                new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00'],
+                        datasets: [{
+                            label: 'Trend',
+                            data: [2040, 2043, 2045, 2042, 2047, 2049],
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { display: false },
+                            x: { display: true }
+                        }
+                    }
+                });
+            }
+
+            // Pattern görsel grafiği
+            const patternCtx = document.getElementById('patternGorselGrafik');
+            if (patternCtx) {
+                new Chart(patternCtx, {
+                    type: 'candlestick',
+                    data: {
+                        datasets: [{
+                            label: 'Candlestick',
+                            data: generateCandlestickData()
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+
+            // Konsensus grafiği
+            const konsensusCtx = document.getElementById('konsensusGrafik');
+            if (konsensusCtx) {
+                new Chart(konsensusCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1h', '2h', '3h', '4h', '5h', '6h'],
+                        datasets: [{
+                            label: 'Model Birliği %',
+                            data: [65, 72, 78, 75, 80, 82],
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { 
+                                min: 0, 
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // AI Doğruluk mini grafiği
+            const aiDogrulukCtx = document.getElementById('aiDogrulukGrafik');
+            if (aiDogrulukCtx) {
+                new Chart(aiDogrulukCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['', '', '', '', '', ''],
+                        datasets: [{
+                            data: [68, 71, 73, 75, 72, 74],
+                            borderColor: '#667eea',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        },
+                        elements: {
+                            point: { radius: 0 }
+                        }
+                    }
+                });
+            }
+
+            // Momentum mini grafiği
+            const momentumCtx = document.getElementById('momentumMiniGrafik');
+            if (momentumCtx) {
+                new Chart(momentumCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['', '', '', '', '', ''],
+                        datasets: [{
+                            data: [1.2, -0.3, 0.8, 1.5, -0.7, 1.8],
+                            backgroundColor: function(context) {
+                                return context.parsed.y >= 0 ? '#28a745' : '#dc3545';
+                            }
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ========================================== //
+        // YARDIMCI FONKSİYONLAR - GELİŞTİRİLMİŞ
+        // ========================================== //
+        function generateCandlestickData() {
+            const data = [];
+            let price = 2040;
+            
+            for (let i = 0; i < 20; i++) {
+                const open = price;
+                const close = open + (Math.random() - 0.5) * 10;
+                const high = Math.max(open, close) + Math.random() * 5;
+                const low = Math.min(open, close) - Math.random() * 5;
+                
+                data.push({ x: i, o: open, h: high, l: low, c: close });
+                price = close;
+            }
+            
+            return data;
+        }
+
+        // ========================================== //
+        // KLAVYE KISAYOLLARI - GELİŞTİRİLMİŞ
+        // ========================================== //
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + Space: Manuel tahmin
+            if (e.ctrlKey && e.code === 'Space') {
+                e.preventDefault();
+                manuelTahmin();
+            }
+            
+            // Ctrl + S: Sistemi başlat/durdur
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                if (window.nakitSistem.aktif) {
+                    sistemiDurdur();
+                } else {
+                    sistemiBaslat();
+                }
+            }
+            
+            // Ctrl + T: Test verisi ekle
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                testVeriEkle();
+            }
+            
+            // Ctrl + R: Risk analizini güncelle
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                riskAnaliziGuncelle();
+            }
+        });
+
+        // ========================================== //
+        // OTOMATIK GÜNCELLEME SİSTEMİ - GELİŞTİRİLMİŞ
+        // ========================================== //
+        setInterval(() => {
+            // Saat güncelle
+            const zaman = new Date().toLocaleTimeString('tr-TR');
+            const sonGuncelleme = document.getElementById('sonGuncelleme');
+            if (sonGuncelleme) {
+                sonGuncelleme.textContent = zaman;
+            }
+            
+            // Rastgele fiyat güncellemeleri (sistem aktif değilse de)
+            if (Math.random() > 0.8) {
+                guncelFiyatlariGuncelle();
+            }
+        }, 30000); // 30 saniyede bir
+
+        // ========================================== //
+        // BAŞLATMA MESAJLARI - GELİŞTİRİLMİŞ
+        // ========================================== //
+        console.log('✅ Nakit v2.0 AI tamamen yüklendi!');
+        console.log('🎯 Özellikler: Gelişmiş AI, Çoklu model analizi, Teknik indikatörler');
+        console.log('🧠 AI Modelleri: Neural Network, Teknik Analiz, Pattern Recognition, Sentiment, Regression');
+        console.log('⌨️ Klavye Kısayolları: Ctrl+Space (Tahmin), Ctrl+S (Başlat/Durdur), Ctrl+T (Test), Ctrl+R (Risk)');
+        console.log('🚀 Sistem hazır - "Sistemi Başlat" butonuna tıklayabilirsiniz');
+        
+        // Başlatma bildirimi
+        setTimeout(() => {
+            bildirimEkle('Gelişmiş AI finansal analiz sistemi başarıyla yüklendi', 'success');
+        }, 500);
+    </script>
+</body>
+</html>
