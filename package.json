@@ -1,0 +1,33 @@
+{
+  "name": "nakit-finansal-sistem",
+  "version": "1.0.0",
+  "description": "Nakit - AI Destekli Finansal Analiz ve Tahmin Sistemi",
+  "main": "index.html",
+  "scripts": {
+    "start": "live-server --port=3000",
+    "dev": "live-server --port=3000 --watch=css,js",
+    "build": "echo 'Build işlemi tamamlandı'",
+    "test": "echo 'Test işlemi başlatıldı'"
+  },
+  "keywords": [
+    "finansal-analiz",
+    "altın",
+    "borsa",
+    "kripto",
+    "tahmin",
+    "ai",
+    "javascript"
+  ],
+  "author": "Dmrilker",
+  "license": "MIT",
+  "dependencies": {
+    "chart.js": "^4.4.0"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dmrilker/nakit-finansal-sistem.git"
+  }
+}
